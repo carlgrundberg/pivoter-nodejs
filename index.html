@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Pivoter!</title>
+    <script src="http://localhost:81/socket.io/socket.io.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:81');
+        var list_data;
+        socket.on('story_list', function (data) {
+            list_data = data;
+            for(i in data.story) {
+
+                if(data.story[i].estimate && data.story[i].estimate[0]['_'] == -1) {
+                    $('#story_list').append($('<li>').append($('<a>', { href: 'results.html'}).html(data.story[i].name)));
+                }
+            }
+
+        });
+    </script>
+</head>
+<body>
+    <ul id="story_list"></ul>
+</body>
+</html>

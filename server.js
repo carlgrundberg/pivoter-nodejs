@@ -8,6 +8,9 @@
 
 var http = require('http');
 var fs = require('fs');
+var xml2js = require('xml2js');
+
+var parser = new xml2js.Parser();
 
 http.createServer(function (req, res) {
     fs.readFile(__dirname + req.url,
@@ -54,12 +57,38 @@ function send_voting_room_update(socket) {
     }
 }
 
+function get_stories_from_tracker(socket) {
+    var data = '';
+    var request = http.request({
+           'hostname': 'www.pivotaltracker.com',
+           'path': '/services/v3/projects/643495/stories',
+           'headers' : {
+                'X-TrackerToken': '66e5053c59ea81420afc5a5262040762'
+            }
+        },
+        function (response) {
+            response.setEncoding('utf8');
+            response.on('data', function (chunk) {
+                data += chunk;
+            });
+            response.on('end', function() {
+                parser.parseString(data, function (err, result) {
+                    socket.emit('story_list', result.stories);
+                    console.log('sent story list');
+                });
+            })
+        });
+    request.end();
+}
+
 io.sockets.on('connection', function (socket) {
     var address = socket.handshake.address;
     console.log("New connection from " + address.address + ":" + address.port);
     if(socket.handshake.headers.referer.indexOf('vote.html') > 0) {
         console.log('New voter');
         vote(socket.id, null);
+    } else if(socket.handshake.headers.referer.indexOf('index.html') > 0) {
+        get_stories_from_tracker(socket);
     } else {
         send_voting_room_update(socket);
     }
