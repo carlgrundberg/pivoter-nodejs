@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Results</title>
+    <script src="http://localhost:81/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:81');
+        socket.emit('join', { room: 'result_room'});
+        socket.on('voting_room_update', function(data) {
+            document.getElementById('total').innerHTML = data.total;
+            document.getElementById('voted').innerHTML = data.voted;
+        });
+    </script>
+</head>
+<body>
+    <h1>USER STORY</h1>
+    <p>Deltagare: <span id="total">0</span></p>
+    <p>Röstat: <span id="voted">0</span></p>
+</body>
+</html>

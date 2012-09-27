@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Vote</title>
+    <script src="http://localhost:81/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:81');
+        socket.emit('join', { room: 'voting_room'});
+    </script>
+</head>
+<body>
+
+    Sida för att rösta!
+</body>
+</html>
