@@ -6,16 +6,18 @@
     <script src="http://localhost:81/socket.io/socket.io.js"></script>
     <script>
         var socket = io.connect('http://localhost:81');
-        socket.emit('join', { room: 'result_room'});
         socket.on('voting_room_update', function(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('story').innerHTML = data.story;
             document.getElementById('total').innerHTML = data.total;
             document.getElementById('voted').innerHTML = data.voted;
         });
     </script>
 </head>
 <body>
-    <h1>USER STORY</h1>
-    <p>Deltagare: <span id="total">0</span></p>
-    <p>Röstat: <span id="voted">0</span></p>
+    <h1 id="story"></h1>
+    <p>Deltagare: <span id="total"></span></p>
+    <p>Röstat: <span id="voted"></span></p>
+    <span id="loading">Loading...</span>
 </body>
 </html>
