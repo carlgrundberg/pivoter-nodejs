@@ -19,7 +19,7 @@ http.createServer(function (req, res) {
             res.writeHead(200, {'Content-Type':'text/html;charset=UTF-8'});
             res.end(data);
         });
-}).listen(80, "192.168.0.187");
+}).listen(80);
 console.log('Server running at http://127.0.0.1:80/');
 
 var io = require('socket.io').listen(81);
@@ -67,6 +67,16 @@ io.sockets.on('connection', function (socket) {
     socket.on('my_vote', function(data) {
         console.log('my_vote', data);
         vote(socket.id, data.value);
+    });
+    socket.on('start_vote', function() {
+       console.log('start_vote');
+       status = 0;
+       send_voting_room_update();
+    });
+    socket.on('end_vote', function() {
+        console.log('end_vote');
+        status = 1;
+        send_voting_room_update();
     });
     socket.on('disconnect', function() {
         delete voters[socket.id];
