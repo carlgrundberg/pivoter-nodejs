@@ -19,7 +19,7 @@ http.createServer(function (req, res) {
             res.writeHead(200, {'Content-Type':'text/html;charset=UTF-8'});
             res.end(data);
         });
-}).listen(80, '127.0.0.1');
+}).listen(80, "192.168.0.187");
 console.log('Server running at http://127.0.0.1:80/');
 
 var io = require('socket.io').listen(81);
