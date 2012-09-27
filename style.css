@@ -1,0 +1,14 @@
+body {
+    background-color: blue;
+}
+
+#header {
+    background: #555;
+    height: 20px;
+}
+
+.button {
+    width: 25%;
+    height: 30px;
+    background-color: #777;
+}

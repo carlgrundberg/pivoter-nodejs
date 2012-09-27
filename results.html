@@ -3,21 +3,18 @@
 <html>
 <head>
     <title>Results</title>
-    <script src="http://localhost:81/socket.io/socket.io.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script src="http://192.168.0.186:81/socket.io/socket.io.js"></script>
     <script>
-        var socket = io.connect('http://localhost:81');
-        var voting_data;
+        var socket = io.connect('http://192.168.0.186:81');
         socket.on('voting_room_update', function(data) {
-           voting_data = data;
-            document.getElementById('story').innerHTML = data.story;
-            document.getElementById('count').innerHTML = data.voted + '/' + data.total;
+            document.getElementById('total').innerHTML = data.total;
+            document.getElementById('voted').innerHTML = data.voted;
         });
     </script>
 </head>
 <body>
-    <h1 id="story"></h1>
-    <p id="count"></p>
-    <a href="#" class="show_results">Show results</a>
+    <h1>USER STORY</h1>
+    <p>Deltagare: <span id="total">0</span></p>
+    <p>Röstat: <span id="voted">0</span></p>
 </body>
 </html>
