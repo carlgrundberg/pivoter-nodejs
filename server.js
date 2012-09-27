@@ -38,20 +38,35 @@ function num_voted() {
     return voted;
 }
 
-function send_voting_room_update() {
-    console.log('sending voting room update');
-    io.sockets.emit('voting_room_update', { voters: voters, total: Object.keys(voters).length, voted: num_voted(), status: status, story: 'User story to vote!' });
+function vote(id, value) {
+    voters[id] = value;
+    send_voting_room_update();
+}
+
+function send_voting_room_update(socket) {
+    var data = { voters: voters, total: Object.keys(voters).length, voted: num_voted(), status: status, story: 'User story to vote!' };
+    if(socket) {
+        console.log('sending voting room update to socket ' + socket.id);
+        socket.emit('voting_room_update', data);
+    } else {
+        console.log('sending voting room update');
+        io.sockets.emit('voting_room_update', data);
+    }
 }
 
 io.sockets.on('connection', function (socket) {
     var address = socket.handshake.address;
     console.log("New connection from " + address.address + ":" + address.port);
-    voters[socket.id] = null;
-    send_voting_room_update();
+    if(socket.handshake.headers.referer.indexOf('vote.html') > 0) {
+        console.log('New voter');
+        vote(socket.id, null);
+    } else {
+        send_voting_room_update(socket);
+    }
+
     socket.on('my_vote', function(data) {
         console.log('my_vote', data);
-        voters[socket.id] = data.value;
-        send_voting_room_update();
+        vote(socket.id, data.value);
     });
     socket.on('disconnect', function() {
         delete voters[socket.id];
