@@ -13,15 +13,20 @@ var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
 http.createServer(function (req, res) {
-    fs.readFile(__dirname + req.url,
-        function (err, data) {
-            if (err) {
-                res.writeHead(500);
-                return res.end('Error loading ' + req.url);
+    if(req.url == '/') req.url = '/index.html';
+    fs.readFile(__dirname + req.url, function (err, data) {
+        if (err) {
+            res.writeHead(500);
+            res.end('Error loading ' + req.url);
+        } else {
+            if(req.url.indexOf(".css", req.url.length - ".css".length) !== -1) {
+                res.writeHead(200, {'Content-Type':'text/css;charset=UTF-8'});
+            } else {
+                res.writeHead(200, {'Content-Type':'text/html;charset=UTF-8'});
             }
-            res.writeHead(200, {'Content-Type':'text/html;charset=UTF-8'});
             res.end(data);
-        });
+        }
+    });
 }).listen(80);
 console.log('Server running at http://127.0.0.1:80/');
 
@@ -30,6 +35,8 @@ io.set('log level', 1);
 
 var voters = {};
 var status = 0;
+var story = null;
+var stories = null;
 
 function num_voted() {
     var voted = 0;
@@ -41,19 +48,25 @@ function num_voted() {
     return voted;
 }
 
-function vote(id, value) {
-    voters[id] = value;
-    send_voting_room_update();
+function reset_votes() {
+    for(i in voters) {
+        voters[i] = null;
+    }
 }
 
-function send_voting_room_update(socket) {
-    var data = { voters: voters, total: Object.keys(voters).length, voted: num_voted(), status: status, story: 'User story to vote!' };
+function vote(id, value) {
+    voters[id] = value;
+    send_update();
+}
+
+function send_update(socket) {
+    var data = { voters: voters, total: Object.keys(voters).length, voted: num_voted(), status: status, story: story };
     if(socket) {
-        console.log('sending voting room update to socket ' + socket.id);
-        socket.emit('voting_room_update', data);
+        console.log('sending update to socket ' + socket.id);
+        socket.emit('update', data);
     } else {
-        console.log('sending voting room update');
-        io.sockets.emit('voting_room_update', data);
+        console.log('sending update to all');
+        io.sockets.emit('update', data);
     }
 }
 
@@ -73,42 +86,61 @@ function get_stories_from_tracker(socket) {
             });
             response.on('end', function() {
                 parser.parseString(data, function (err, result) {
-                    socket.emit('story_list', result.stories);
-                    console.log('sent story list');
+                    s = [];
+                    for(i in result.stories.story) {
+                        if(result.stories.story[i].estimate && result.stories.story[i].estimate[0]['_'] == -1) {
+                            s.push(result.stories.story[i]);
+                        }
+                    }
+                    stories = s;
+                    send_stories(socket);
                 });
             })
         });
     request.end();
 }
 
+function send_stories(socket) {
+    socket.emit('stories', {stories: stories});
+    console.log('sent stories');
+}
+
 io.sockets.on('connection', function (socket) {
     var address = socket.handshake.address;
     console.log("New connection from " + address.address + ":" + address.port);
-    if(socket.handshake.headers.referer.indexOf('vote.html') > 0) {
+    if(socket.handshake.headers.referer.indexOf('html') === -1) {
         console.log('New voter');
         vote(socket.id, null);
-    } else if(socket.handshake.headers.referer.indexOf('index.html') > 0) {
-        get_stories_from_tracker(socket);
     } else {
-        send_voting_room_update(socket);
+        send_update(socket);
     }
 
-    socket.on('my_vote', function(data) {
-        console.log('my_vote', data);
+    socket.on('get_stories', function() {
+        if(stories == null) {
+            get_stories_from_tracker(socket);
+        } else {
+            send_stories(socket);
+        }
+    });
+
+    socket.on('vote', function(data) {
+        console.log('vote', data);
         vote(socket.id, data.value);
     });
-    socket.on('start_vote', function() {
-       console.log('start_vote');
-       status = 0;
-       send_voting_room_update();
+    socket.on('select_story', function(data) {
+       console.log('select_story');
+       story = stories[data.story];
+       status = 1;
+       reset_votes();
+       send_update();
     });
-    socket.on('end_vote', function() {
-        console.log('end_vote');
-        status = 1;
-        send_voting_room_update();
+    socket.on('end_voting', function() {
+        console.log('end_voting');
+        status = 2;
+        send_update();
     });
     socket.on('disconnect', function() {
         delete voters[socket.id];
-        send_voting_room_update();
+        send_update();
     });
 });
