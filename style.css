@@ -73,8 +73,8 @@ body {
 }
 
 .disabled, .disabled:hover  {
-    background: #9A9997;
-    color: #bdbcba;
+    background: #bdbcba;
+    color: #807f7d;
 }
 
 img {

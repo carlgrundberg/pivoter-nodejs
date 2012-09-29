@@ -8,6 +8,7 @@
     <script type="text/javascript">
         var socket = io.connect('pivoter.menmo.se:81');
         var stories = null;
+        var status = null;
         socket.on('update', function (data) {
             if(data.story) {
                 $('.title').html(data.story.name[0]);
@@ -15,34 +16,34 @@
             }
             $('.count').html(data.total + ' connected, ' + data.voted + ' voted');
 
-            if (data.status == 0) {
-                if(stories == null) {
+            if(status != data.status) {
+                if (data.status == 0) {
                     socket.emit('get_stories');
+                    showpage('stories');
                 }
-                showpage('stories');
-            }
-            else if (data.status == 1) {
-                showpage('voting');
-            }
-            else if (data.status == 2) {
-                var bars = {};
-                 for(i in data.voters) {
-                     if(data.voters[i]) {
-                         if(bars[data.voters[i]]) {
-                             bars[data.voters[i]]++;
-                         } else {
-                             bars[data.voters[i]] = 1;
+                else if (data.status == 1) {
+                    showpage('voting');
+                }
+                else if (data.status == 2) {
+                    var bars = {};
+                     for(i in data.voters) {
+                         if(data.voters[i]) {
+                             if(bars[data.voters[i]]) {
+                                 bars[data.voters[i]]++;
+                             } else {
+                                 bars[data.voters[i]] = 1;
+                             }
                          }
                      }
-                 }
-                var c = $('.bars').empty();
-                for(i in bars) {
-                    c.append($('<div>').addClass('label').html(i)).append($('<div>').addClass('bar').css({width: bars[i]*100+'px'}).html(bars[i]));
+                    var c = $('.bars').empty();
+                    for(i in bars) {
+                        c.append($('<div>').addClass('label').html(i)).append($('<div>').addClass('bar').css({width: bars[i]*100+'px'}).html(bars[i]));
+                    }
+                    console.log(bars);
+                    showpage('results');
                 }
-                console.log(bars);
-                showpage('results');
+                status = data.status;
             }
-
         });
         socket.on('stories', function (data) {
             stories = data.stories;
@@ -79,6 +80,7 @@
 <div class="header">Pivoter</div>
 <div id="stories" class="page">
     <div class="msg">Loading stories...</div>
+    <div class="count"></div>
     <ul></ul>
 </div>
 <div id="voting" class="page">

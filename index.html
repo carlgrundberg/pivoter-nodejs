@@ -9,25 +9,29 @@
 
     <script type="text/javascript">
         var socket = io.connect('pivoter.menmo.se:81');
+        var status = null;
         socket.on('update', function(data) {
             $('#votes').html(data.voted);
             $('#voters').html(data.total);
-            switch(data.status) {
-                case 0:
-                    showpage('start');
-                    break;
-                case 1:
-                    $('.button').removeClass('disabled').live('click', function() {
-                        $(".button").removeClass('active');
-                        $(this).addClass('active');
-                        socket.emit('vote', { value: $(this).html() });
-                    });
-                    showpage('vote');
-                    break;
-                case 2:
-                    $('.button').addClass('disabled').die();
-                    showpage('vote');
-                    break;
+            if(status != data.status) {
+                switch(data.status) {
+                    case 0:
+                        showpage('start');
+                        break;
+                    case 1:
+                        $('.button').removeClass('disabled active').live('click', function() {
+                            $(".button").removeClass('active');
+                            $(this).addClass('active');
+                            socket.emit('vote', { value: $(this).html() });
+                        });
+                        showpage('vote');
+                        break;
+                    case 2:
+                        $('.button').addClass('disabled').die();
+                        showpage('vote');
+                        break;
+                }
+                status = data.status;
             }
         });
 

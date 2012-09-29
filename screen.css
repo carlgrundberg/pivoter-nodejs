@@ -161,3 +161,12 @@ li a {
 li a:hover {
     color: black;
 }
+
+#stories .count {
+    position: absolute;
+    top: 0;
+    right: 1%;
+    color: #fff;
+    font-size: 1em;
+    line-height: 40px;
+}

@@ -13,13 +13,13 @@ var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
 http.createServer(function (req, res) {
-    if(req.url == '/') req.url = '/index.html';
+    if (req.url == '/') req.url = '/index.html';
     fs.readFile(__dirname + req.url, function (err, data) {
         if (err) {
             res.writeHead(500);
             res.end('Error loading ' + req.url);
         } else {
-            if(req.url.indexOf(".css", req.url.length - ".css".length) !== -1) {
+            if (req.url.indexOf(".css", req.url.length - ".css".length) !== -1) {
                 res.writeHead(200, {'Content-Type':'text/css;charset=UTF-8'});
             } else {
                 res.writeHead(200, {'Content-Type':'text/html;charset=UTF-8'});
@@ -34,11 +34,11 @@ var io = require('socket.io').listen(81);
 io.set('log level', 1);
 
 var state = {
-    voters: {},
-    status: 0,
-    story: null,
-    total: 0,
-    voted: 0
+    voters:{},
+    status:0,
+    story:null,
+    total:0,
+    voted:0
 };
 
 var stories = null;
@@ -49,23 +49,20 @@ function total_voters() {
 
 function num_voted() {
     var voted = 0;
-    for(i in state.voters) {
-        if(state.voters[i] != null) {
+    for (i in state.voters) {
+        if (state.voters[i] != null) {
             voted++;
         }
     }
     return voted;
 }
 
-function reset_votes() {
-    for(i in this.voters) {
-        voters[i] = null;
-    }
-}
-
 function reset_state() {
     state.status = 0;
     state.story = null;
+    for (i in state.voters) {
+        state.voters[i] = null;
+    }
 }
 
 function vote(id, value) {
@@ -77,7 +74,7 @@ function send_update(socket) {
     state.total = total_voters();
     state.voted = num_voted();
 
-    if(socket) {
+    if (socket) {
         console.log('sending update to socket ' + socket.id);
         socket.emit('update', state);
     } else {
@@ -89,10 +86,10 @@ function send_update(socket) {
 function get_stories_from_tracker(socket) {
     var data = '';
     var request = http.request({
-           'hostname': 'www.pivotaltracker.com',
-           'path': '/services/v3/projects/643495/stories',
-           'headers' : {
-                'X-TrackerToken': '66e5053c59ea81420afc5a5262040762'
+            'hostname':'www.pivotaltracker.com',
+            'path':'/services/v3/projects/643495/stories',
+            'headers':{
+                'X-TrackerToken':'66e5053c59ea81420afc5a5262040762'
             }
         },
         function (response) {
@@ -100,11 +97,11 @@ function get_stories_from_tracker(socket) {
             response.on('data', function (chunk) {
                 data += chunk;
             });
-            response.on('end', function() {
+            response.on('end', function () {
                 parser.parseString(data, function (err, result) {
                     s = [];
-                    for(i in result.stories.story) {
-                        if(result.stories.story[i].estimate && result.stories.story[i].estimate[0]['_'] == -1) {
+                    for (i in result.stories.story) {
+                        if (result.stories.story[i].estimate && result.stories.story[i].estimate[0]['_'] == -1) {
                             s.push(result.stories.story[i]);
                         }
                     }
@@ -117,51 +114,54 @@ function get_stories_from_tracker(socket) {
 }
 
 function send_stories(socket) {
-    socket.emit('stories', {stories: stories});
+    socket.emit('stories', {stories:stories});
     console.log('sent stories');
 }
 
 io.sockets.on('connection', function (socket) {
     var address = socket.handshake.address;
     console.log("New connection from " + address.address + ":" + address.port + " (" + socket.handshake.headers.referer + ")");
-    if(socket.handshake.headers.referer.indexOf('html') === -1) {
+    if (socket.handshake.headers.referer.indexOf('html') === -1) {
         console.log('New voter');
         vote(socket.id, null);
     } else {
         send_update(socket);
     }
 
-    socket.on('get_stories', function() {
+    socket.on('get_stories', function () {
         console.log('get_stories');
-        if(stories == null) {
+        if (stories == null) {
             get_stories_from_tracker(socket);
         } else {
             send_stories(socket);
         }
     });
 
-    socket.on('vote', function(data) {
+    socket.on('vote', function (data) {
         console.log('vote', data);
-        vote(socket.id, data.value);
+        if(state.status == 1) {
+            vote(socket.id, data.value);
+        }
     });
-    socket.on('select_story', function(data) {
-       console.log('select_story');
-       state.story = stories[data.story];
-       state.status = 1;
-       reset_votes();
-       send_update();
+    socket.on('select_story', function (data) {
+        console.log('select_story', data);
+        if (data.story) {
+            state.story = stories[data.story];
+            state.status = 1;
+            send_update();
+        }
     });
-    socket.on('end_voting', function() {
+    socket.on('end_voting', function () {
         console.log('end_voting');
         state.status = 2;
         send_update();
     });
-    socket.on('end_story', function() {
+    socket.on('end_story', function () {
         console.log('end_story');
         reset_state();
         send_update();
     });
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
         delete state.voters[socket.id];
         send_update();
     });
