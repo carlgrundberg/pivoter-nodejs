@@ -10,22 +10,25 @@
     <script type="text/javascript">
         var socket = io.connect('pivoter.menmo.se:81');
         socket.on('update', function(data) {
-            if(data.status == 0) {
-                showpage('start');
+            $('#votes').html(data.voted);
+            $('#voters').html(data.total);
+            switch(data.status) {
+                case 0:
+                    showpage('start');
+                    break;
+                case 1:
+                    $('.button').removeClass('disabled').live('click', function() {
+                        $(".button").removeClass('active');
+                        $(this).addClass('active');
+                        socket.emit('vote', { value: $(this).html() });
+                    });
+                    showpage('vote');
+                    break;
+                case 2:
+                    $('.button').addClass('disabled').die();
+                    showpage('vote');
+                    break;
             }
-        });
-        $(function() {
-            $(".button").click(function() {
-                $(".button").removeClass('active');
-                $(this).addClass('active');
-                socket.emit('my_vote', { value: this.id });
-            });
-            socket.on('voting_room_update', function(data) {
-                $('#votes').html(data.voted);
-            });
-            socket.on('voting_room_update', function(data) {
-                $('#voters').html(data.total);
-            });
         });
 
         function showpage(page) {
@@ -35,50 +38,50 @@
     </script>
 </head>
 <body>
-<div id="header">Pivoter</div>
+<div class="header">Pivoter</div>
 <div id="start" class="page">
-    <p>No story selected.</p>
+    <div class="msg">Waiting for story...</div>
 </div>
 <div id="vote" class="page">
     <div id="buttongrid">
         <div class="grid">
-            <div class="button" id="0">0</div>
+            <div class="button">0</div>
         </div>
         <div class="grid">
-            <div class="button" id="1">1</div>
+            <div class="button">1</div>
         </div>
         <div class="grid">
-            <div class="button" id="2">2</div>
+            <div class="button">2</div>
         </div>
         <div class="grid">
-            <div class="button" id="3">3</div>
+            <div class="button">3</div>
         </div>
         <div class="grid">
-            <div class="button" id="5">5</div>
+            <div class="button">5</div>
         </div>
         <div class="grid">
-            <div class="button" id="8">8</div>
+            <div class="button">8</div>
         </div>
         <div class="grid">
-            <div class="button" id="13">13</div>
+            <div class="button">13</div>
         </div>
         <div class="grid">
-            <div class="button" id="20">20</div>
+            <div class="button">21</div>
         </div>
         <div class="grid">
-            <div class="button" id="40">40</div>
+            <div class="button">34</div>
         </div>
         <div class="grid">
-            <div class="button" id="100">100</div>
+            <div class="button">55</div>
         </div>
         <div class="grid">
-            <div class="button" id="1000">?</div>
+            <div class="button">?</div>
         </div>
         <div class="grid">
-            <div class="button" id="1001"><img src="coffe_cup.png" height="42" width="42" /></div>
+            <div class="button"><img src="coffe_cup.png" height="42" width="42" /></div>
         </div>
         <div style="clear:both"></div>
-        <div id="footer"><span id="votes">0</span> of <span id="voters">1</span> votes in</div>
+        <div class="footer"><span id="votes">0</span> of <span id="voters">1</span> votes in</div>
     </div>
 </div>
 </body>

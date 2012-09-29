@@ -1,0 +1,163 @@
+@font-face {
+    font-family: 'segoeuil';
+    src: url('FONTER/segoeuil.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'segoeui';
+    src: url('FONTER/segoeui.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    font-size: 20px;
+    font-family: segoeuil, "times new roman";
+    height: 100%;
+}
+
+a {
+    /*text-decoration: none;*/
+    color: #1e5799;
+}
+
+.page {
+    display: none;
+    overflow: hidden;
+}
+
+.header {
+    /* generated css */
+    background: #1e5799; /* Old browsers */
+    background: -moz-linear-gradient(top,  #1e5799 0%, #2e4560 0%, #26374a 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1e5799), color-stop(0%,#2e4560), color-stop(100%,#26374a)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #1e5799 0%,#2e4560 0%,#26374a 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #1e5799 0%,#2e4560 0%,#26374a 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #1e5799 0%,#2e4560 0%,#26374a 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #1e5799 0%,#2e4560 0%,#26374a 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e5799', endColorstr='#26374a',GradientType=0 ); /* IE6-9 */
+
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    color: white;
+}
+
+.button {
+    text-align: center;
+    background: #bdbcba;
+    color: #2e4660;
+    text-decoration: none;
+    display: block;
+    height: 100px;
+    line-height: 100px;
+    width: 200px;
+    font-family: segoeui;
+    font-size: 1.5em;
+}
+
+.button:hover {
+    background: #2e4660;
+    color: #ffffff;
+}
+
+.title {
+    color: #2e4660;
+    font-size: 2.5em;
+    padding-top: 5%;
+    padding-left: 10%;
+    border-bottom: 0.1em solid #2e4660;
+    width: 60%;
+}
+
+.description {
+    color: #2e4660;
+    font-size: 1.5em;
+    margin-top: 3%;
+    margin-left: 10%;
+    width: 60%;
+}
+
+.info {
+    position: absolute;
+    right: 10%;
+    bottom: 30%;
+}
+
+.count {
+    font-size: 1.5em;
+    color: #2e4660;
+    margin-bottom: 10%;
+}
+
+.bars {
+    margin-left: 10%;
+    margin-top: 3%;
+    font-size: 1.8em;
+    font-family: segoeui;
+    color: #2e4660;
+}
+
+.bars div {
+    float: left;
+    padding: 0.1em 0.5em;
+    margin-bottom: 1%;
+}
+
+.bars .label {
+    clear: both;
+    width: 3%;
+}
+
+.bars .bar {
+    background: #2e4660;
+    color: white;
+    text-align: right;
+}
+
+.msg {
+    position: absolute;
+    top: 20%;
+    left: 0;
+    text-align: center;
+    width: 100%;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+}
+
+li a {
+    display: block;
+    /* generated css */
+    background: #EEE /*{c-bup-background-color}*/;
+    background-image: -webkit-gradient(linear, left top, left bottom, from( white /*{c-bup-background-start}*/), to( #F1F1F1 /*{c-bup-background-end}*/));
+    background-image: -webkit-linear-gradient( white /*{c-bup-background-start}*/, #F1F1F1 /*{c-bup-background-end}*/);
+    background-image: -moz-linear-gradient( white /*{c-bup-background-start}*/, #F1F1F1 /*{c-bup-background-end}*/);
+    background-image: -ms-linear-gradient( white /*{c-bup-background-start}*/, #F1F1F1 /*{c-bup-background-end}*/);
+    background-image: -o-linear-gradient( white /*{c-bup-background-start}*/, #F1F1F1 /*{c-bup-background-end}*/);
+    background-image: linear-gradient( white /*{c-bup-background-start}*/, #F1F1F1 /*{c-bup-background-end}*/);
+    text-decoration: none;
+    padding: 0.2em 0.5em;
+    color: #2e4660 ;
+    font-size: 1.5em;
+    font-family: segoeui;
+}
+
+li a:hover {
+    color: black;
+}

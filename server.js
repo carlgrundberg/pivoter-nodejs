@@ -33,15 +33,24 @@ console.log('Server running at http://127.0.0.1:80/');
 var io = require('socket.io').listen(81);
 io.set('log level', 1);
 
-var voters = {};
-var status = 0;
-var story = null;
+var state = {
+    voters: {},
+    status: 0,
+    story: null,
+    total: 0,
+    voted: 0
+};
+
 var stories = null;
+
+function total_voters() {
+    return Object.keys(state.voters).length;
+}
 
 function num_voted() {
     var voted = 0;
-    for(i in voters) {
-        if(voters[i] != null) {
+    for(i in state.voters) {
+        if(state.voters[i] != null) {
             voted++;
         }
     }
@@ -49,24 +58,31 @@ function num_voted() {
 }
 
 function reset_votes() {
-    for(i in voters) {
+    for(i in this.voters) {
         voters[i] = null;
     }
 }
 
+function reset_state() {
+    state.status = 0;
+    state.story = null;
+}
+
 function vote(id, value) {
-    voters[id] = value;
+    state.voters[id] = value;
     send_update();
 }
 
 function send_update(socket) {
-    var data = { voters: voters, total: Object.keys(voters).length, voted: num_voted(), status: status, story: story };
+    state.total = total_voters();
+    state.voted = num_voted();
+
     if(socket) {
         console.log('sending update to socket ' + socket.id);
-        socket.emit('update', data);
+        socket.emit('update', state);
     } else {
         console.log('sending update to all');
-        io.sockets.emit('update', data);
+        io.sockets.emit('update', state);
     }
 }
 
@@ -107,7 +123,7 @@ function send_stories(socket) {
 
 io.sockets.on('connection', function (socket) {
     var address = socket.handshake.address;
-    console.log("New connection from " + address.address + ":" + address.port);
+    console.log("New connection from " + address.address + ":" + address.port + " (" + socket.handshake.headers.referer + ")");
     if(socket.handshake.headers.referer.indexOf('html') === -1) {
         console.log('New voter');
         vote(socket.id, null);
@@ -116,6 +132,7 @@ io.sockets.on('connection', function (socket) {
     }
 
     socket.on('get_stories', function() {
+        console.log('get_stories');
         if(stories == null) {
             get_stories_from_tracker(socket);
         } else {
@@ -129,18 +146,23 @@ io.sockets.on('connection', function (socket) {
     });
     socket.on('select_story', function(data) {
        console.log('select_story');
-       story = stories[data.story];
-       status = 1;
+       state.story = stories[data.story];
+       state.status = 1;
        reset_votes();
        send_update();
     });
     socket.on('end_voting', function() {
         console.log('end_voting');
-        status = 2;
+        state.status = 2;
+        send_update();
+    });
+    socket.on('end_story', function() {
+        console.log('end_story');
+        reset_state();
         send_update();
     });
     socket.on('disconnect', function() {
-        delete voters[socket.id];
+        delete state.voters[socket.id];
         send_update();
     });
 });

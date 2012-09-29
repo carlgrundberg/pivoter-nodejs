@@ -2,32 +2,55 @@
 <html>
 <head>
     <title>Pivoter Screenview</title>
-    <link rel="stylesheet" type="text/css" media="all" href="style.css">
+    <link rel="stylesheet" type="text/css" media="all" href="screen.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://pivoter.menmo.se:81/socket.io/socket.io.js"></script>
     <script type="text/javascript">
         var socket = io.connect('pivoter.menmo.se:81');
+        var stories = null;
         socket.on('update', function (data) {
+            if(data.story) {
+                $('.title').html(data.story.name[0]);
+                $('.description').html(data.story.description[0].replace(/\n/g, '<br/>'));
+            }
+            $('.count').html(data.total + ' connected, ' + data.voted + ' voted');
+
             if (data.status == 0) {
-                socket.emit('get_stories');
+                if(stories == null) {
+                    socket.emit('get_stories');
+                }
                 showpage('stories');
             }
             else if (data.status == 1) {
-                $('.title').html(data.story.name[0]);
-                $('.description').html(data.story.description[0].replace('\n', '<br/>'));
-                $('.count').html(data.total + ' connected, ' + data.voted + ' voted');
                 showpage('voting');
             }
             else if (data.status == 2) {
+                var bars = {};
+                 for(i in data.voters) {
+                     if(data.voters[i]) {
+                         if(bars[data.voters[i]]) {
+                             bars[data.voters[i]]++;
+                         } else {
+                             bars[data.voters[i]] = 1;
+                         }
+                     }
+                 }
+                var c = $('.bars').empty();
+                for(i in bars) {
+                    c.append($('<div>').addClass('label').html(i)).append($('<div>').addClass('bar').css({width: bars[i]*100+'px'}).html(bars[i]));
+                }
+                console.log(bars);
                 showpage('results');
             }
+
         });
         socket.on('stories', function (data) {
-            console.log(data);
+            stories = data.stories;
             var list = $('#stories ul').empty();
-            for (i in data.stories) {
-                list.append($('<li>').append($('<a>', { href:'#', rel:i }).html(data.stories[i].name[0])));
+            for (i in stories) {
+                list.append($('<li>').append($('<a>', { href:'#', rel:i }).html(stories[i].name[0])));
             }
+            $('.msg').hide();
         });
 
         $('#stories ul a').live('click', function (e) {
@@ -36,9 +59,13 @@
         });
 
         $(function() {
-            $('#voting a').click(function (e) {
+            $('a[href="#results"]').click(function (e) {
                 e.preventDefault();
                 socket.emit('end_voting');
+            });
+            $('a[href="#stories"]').click(function (e) {
+                e.preventDefault();
+                socket.emit('end_story');
             });
         });
 
@@ -49,21 +76,27 @@
     </script>
 </head>
 <body>
+<div class="header">Pivoter</div>
 <div id="stories" class="page">
-    <div class="header">Pivoter</div>
+    <div class="msg">Loading stories...</div>
     <ul></ul>
 </div>
 <div id="voting" class="page">
-    <div class="header">Pivoter</div>
     <div class="title"></div>
     <div class="description"></div>
     <div class="info">
         <div class="count"></div>
-        <a href="#" class="button">Results</a>
+        <a href="#results" class="button">Results</a>
+        <a href="#stories">Back</a>
     </div>
 </div>
 <div id="results" class="page">
-    <div class="header">Pivoter</div>
+    <div class="title"></div>
+    <div class="bars"></div>
+    <div class="info">
+        <div class="count"></div>
+        <a href="#stories" class="button">Done</a>
+    </div>
 </div>
 </body>
 </html>

@@ -72,9 +72,9 @@ body {
     color: #ffffff;
 }
 
-.disabled {
+.disabled, .disabled:hover  {
     background: #9A9997;
-    color: #ffffff;
+    color: #bdbcba;
 }
 
 img {
@@ -90,50 +90,10 @@ img {
     color: #2e4660;
 }
 
-#voting {
-    background: white;
-    height: 100%;
-}
-
-#voting .title {
-    color: #2e4660;
-    font-size: 2.5em;
-    padding-top: 5%;
-    padding-left: 10%;
-    border-bottom: 0.1em solid #2e4660;
-    width: 60%;
-}
-
-#voting .description {
-    color: #2e4660;
-    font-size: 1.5em;
-    margin-top: 3%;
-    margin-left: 10%;
-    width: 60%;
-}
-
-#voting .info {
+.msg {
     position: absolute;
-    right: 10%;
-    bottom: 30%;
-}
-
-#voting .count {
-    font-size: 1.5em;
-    color: #2e4660;
-    margin-bottom: 10%;
-}
-
-#voting .button {
-    height: 100px;
-    line-height: 100px;
-    width: 200px;
-    background-color: #bdbcba;
-    font-family: segoeui;
-    font-size: 1.5em;
-}
-
-#results {
-    background: white;
-    height: 100%;
+    top: 20%;
+    left: 0;
+    text-align: center;
+    width: 100%;
 }
