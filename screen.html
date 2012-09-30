@@ -12,7 +12,9 @@
         socket.on('update', function (data) {
             if(data.story) {
                 $('.title').html(data.story.name[0]);
-                $('.description').html(data.story.description[0].replace(/\n/g, '<br/>'));
+                if(typeof(data.story.description[0]) == 'string' ) {
+                    $('.description').html(data.story.description[0].replace(/\n/g, '<br/>'));
+                }
             }
             $('.count').html(data.total + ' connected, ' + data.voted + ' voted');
 
