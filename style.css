@@ -97,3 +97,8 @@ img {
     text-align: center;
     width: 100%;
 }
+
+#title {
+    margin: 10px;
+    font-family: 'segoeui';
+}

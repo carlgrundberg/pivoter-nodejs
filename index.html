@@ -19,6 +19,7 @@
                         showpage('start');
                         break;
                     case 1:
+                        $('#title').html(data.story.name[0]);
                         $('.button').removeClass('disabled active').live('click', function() {
                             $(".button").removeClass('active');
                             $(this).addClass('active');
@@ -27,6 +28,7 @@
                         showpage('vote');
                         break;
                     case 2:
+                        $('#title').html(data.story.name[0]);
                         $('.button').addClass('disabled').die();
                         showpage('vote');
                         break;
@@ -47,6 +49,7 @@
     <div class="msg">Waiting for story...</div>
 </div>
 <div id="vote" class="page">
+    <div id="title"></div>
     <div id="buttongrid">
         <div class="grid">
             <a href="#" class="button">0</a>
