@@ -33,6 +33,8 @@ var io = require('socket.io').listen(app);
 io.set('log level', 1);
 
 io.set('transports', [
+    'htmlfile',
+    'xhr-polling',
     'jsonp-polling'
 ]);
 
