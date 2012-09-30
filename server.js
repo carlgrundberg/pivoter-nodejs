@@ -32,6 +32,10 @@ var app = http.createServer(function (req, res) {
 var io = require('socket.io').listen(app);
 io.set('log level', 1);
 
+io.set('transports', [
+    'jsonp-polling'
+]);
+
 app.listen(1337);
 
 var state = {
