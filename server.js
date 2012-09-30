@@ -33,9 +33,10 @@ var io = require('socket.io').listen(app);
 io.set('log level', 1);
 
 io.set('transports', [
-    'htmlfile',
-    'xhr-polling',
-    'jsonp-polling'
+    'websocket'
+    , 'flashsocket'
+    , 'htmlfile'
+    , 'jsonp-polling'
 ]);
 
 app.listen(1337);
