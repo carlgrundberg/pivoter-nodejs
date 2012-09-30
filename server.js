@@ -12,7 +12,7 @@ var xml2js = require('xml2js');
 
 var parser = new xml2js.Parser();
 
-http.createServer(function (req, res) {
+var app = http.createServer(function (req, res) {
     if (req.url == '/') req.url = '/index.html';
     fs.readFile(__dirname + req.url, function (err, data) {
         if (err) {
@@ -27,11 +27,12 @@ http.createServer(function (req, res) {
             res.end(data);
         }
     });
-}).listen(80);
-console.log('Server running at http://127.0.0.1:80/');
+});
 
-var io = require('socket.io').listen(81);
+var io = require('socket.io').listen(app);
 io.set('log level', 1);
+
+app.listen(1337);
 
 var state = {
     voters:{},

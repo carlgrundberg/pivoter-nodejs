@@ -4,9 +4,9 @@
     <title>Pivoter Screenview</title>
     <link rel="stylesheet" type="text/css" media="all" href="screen.css">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
-    <script type="text/javascript" src="http://pivoter.menmo.se:81/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="http://pivoter.menmo.se:1337/socket.io/socket.io.js"></script>
     <script type="text/javascript">
-        var socket = io.connect('pivoter.menmo.se:81');
+        var socket = io.connect('pivoter.menmo.se:1337');
         var stories = null;
         var status = null;
         socket.on('update', function (data) {
