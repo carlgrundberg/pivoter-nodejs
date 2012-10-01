@@ -8,38 +8,39 @@
     <script type="text/javascript" src="http://pivoter.menmo.se:1337/socket.io/socket.io.js"></script>
 
     <script type="text/javascript">
-        var ua = navigator.userAgent.toLowerCase();
-        var socket = io.connect('pivoter.menmo.se:1337');
-        var status = null;
-        socket.on('update', function(data) {
-            $('#votes').html(data.voted);
-            $('#voters').html(data.total);
-            if(status != data.status) {
-                switch(data.status) {
-                    case 0:
-                        showpage('start');
-                        break;
-                    case 1:
-                        $('#title').html(data.story.name[0]);
-                        $('.button').removeClass('disabled active').live('click', function() {
-                            $(".button").removeClass('active');
-                            $(this).addClass('active');
-                            socket.emit('vote', { value: $(this).html() });
-                        });
-                        showpage('vote');
-                        break;
-                    case 2:
-                        $('#title').html(data.story.name[0]);
-                        $('.button').addClass('disabled').die();
-                        showpage('vote');
-                        break;
+        if(window.WebSocket) {
+            var socket = io.connect('pivoter.menmo.se:1337');
+            var status = null;
+            socket.on('update', function(data) {
+                $('#votes').html(data.voted);
+                $('#voters').html(data.total);
+                if(status != data.status) {
+                    switch(data.status) {
+                        case 0:
+                            showpage('start');
+                            break;
+                        case 1:
+                            $('#title').html(data.story.name[0]);
+                            $('.button').removeClass('disabled active').live('click', function() {
+                                $(".button").removeClass('active');
+                                $(this).addClass('active');
+                                socket.emit('vote', { value: $(this).html() });
+                            });
+                            showpage('vote');
+                            break;
+                        case 2:
+                            $('#title').html(data.story.name[0]);
+                            $('.button').addClass('disabled').die();
+                            showpage('vote');
+                            break;
+                    }
+                    status = data.status;
                 }
-                status = data.status;
-            }
-        });
+            });
+        }
 
         $(function() {
-            if(!window.WebSocket || ua.indexOf("android") > -1){
+            if(!window.WebSocket){
                 showpage('nowebsocket');
             }
         });
