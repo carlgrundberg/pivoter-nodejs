@@ -8,6 +8,7 @@
     <script type="text/javascript" src="http://pivoter.menmo.se:1337/socket.io/socket.io.js"></script>
 
     <script type="text/javascript">
+        var ua = navigator.userAgent.toLowerCase();
         var socket = io.connect('pivoter.menmo.se:1337');
         var status = null;
         socket.on('update', function(data) {
@@ -38,7 +39,7 @@
         });
 
         $(function() {
-            if(!window.WebSocket){
+            if(!window.WebSocket || ua.indexOf("android") > -1){
                 showpage('nowebsocket');
             }
         });
