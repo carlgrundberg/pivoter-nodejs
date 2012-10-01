@@ -33,10 +33,8 @@ var io = require('socket.io').listen(app);
 io.set('log level', 1);
 
 io.set('transports', [
-    'xhr-polling'
+    'websocket'
 ]);
-
-io.set('try multiple transports', false);
 
 app.listen(1337);
 

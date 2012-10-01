@@ -37,6 +37,12 @@
             }
         });
 
+        $(function() {
+            if(!window.WebSocket){
+                showpage('nowebsocket');
+            }
+        });
+
         function showpage(page) {
             $('.page').hide();
             $('#'+page).show();
@@ -45,6 +51,9 @@
 </head>
 <body>
 <div class="header">Pivoter</div>
+<div id="nowebsocket" class="page">
+    <div class="msg">You need a browser with support for websockets to use this page.</div>
+</div>
 <div id="start" class="page">
     <div class="msg">Waiting for story...</div>
 </div>
