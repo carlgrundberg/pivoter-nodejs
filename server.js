@@ -33,11 +33,10 @@ var io = require('socket.io').listen(app);
 io.set('log level', 1);
 
 io.set('transports', [
-    'websocket'
-    , 'flashsocket'
-    , 'htmlfile'
-    , 'jsonp-polling'
+    'xhr-polling'
 ]);
+
+io.set('try multiple transports', false);
 
 app.listen(1337);
 
