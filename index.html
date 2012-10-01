@@ -40,7 +40,7 @@
         }
 
         $(function() {
-            if(!window.WebSocket){
+            if(!window.WebSocket || navigator.userAgent.match(/Android/i) != null){
                 showpage('nowebsocket');
             }
         });
