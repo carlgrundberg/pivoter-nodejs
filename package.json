@@ -1,0 +1,16 @@
+{
+    "name": "pivoter",
+    "version": "0.1.0",
+    "description": "Pocker planning app",
+    "main": "server.js",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:carlgrundberg/pivoter-nodejs.git"
+    },
+    "author": "Carl Grundberg",
+    "license": "BSD",
+    "dependencies": {
+        "socket.io": "latest",
+        "xml2js": "latest"
+    }
+}
